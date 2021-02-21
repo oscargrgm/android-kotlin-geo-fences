@@ -26,11 +26,11 @@ import com.example.android.treasureHunt.HuntMainActivity.Companion.ACTION_GEOFEN
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
 
-/*
- * Triggered by the Geofence.  Since we only have one active Geofence at once, we pull the request
+/**
+ * Triggered by the Geofence. Since we only have one active Geofence at once, we pull the request
  * ID from the first Geofence, and locate it within the registered landmark data in our
- * GeofencingConstants within GeofenceUtils, which is a linear string search. If we had  very large
- * numbers of Geofence possibilities, it might make sense to use a different data structure.  We
+ * GeofencingConstants within GeofenceUtils, which is a linear string search. If we had very large
+ * numbers of Geofence possibilities, it might make sense to use a different data structure. We
  * then pass the Geofence index into the notification, which allows us to have a custom "found"
  * message associated with each Geofence.
  */
@@ -38,6 +38,48 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         // TODO: Step 11 implement the onReceive method
+        when (intent.action) {
+            ACTION_GEOFENCE_EVENT -> handleGeofenceEvent(context, intent)
+        }
+    }
+
+    private fun handleGeofenceEvent(context: Context, intent: Intent) {
+        val geofenceEvent = GeofencingEvent.fromIntent(intent)
+
+        if (geofenceEvent.hasError()) {
+            val errorMessage = errorMessage(context, geofenceEvent.errorCode)
+            Log.e(TAG, errorMessage)
+            return
+        }
+
+        if (geofenceEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+            Log.d(TAG, context.getString(R.string.geofence_entered))
+
+            val fenceId = when {
+                geofenceEvent.triggeringGeofences.isNotEmpty() -> {
+                    geofenceEvent.triggeringGeofences[0].requestId
+                }
+                else -> {
+                    Log.e(TAG, "No Geofence Trigger Found! Abort mission!")
+                    return
+                }
+            }
+
+            val foundIndex = GeofencingConstants.LANDMARK_DATA.indexOfFirst { it.id == fenceId }
+            if (foundIndex == -1) {
+                Log.e(TAG, "Unknown Geofence: Abort mission!")
+                return
+            }
+
+            val notificationManager = ContextCompat.getSystemService(
+                context,
+                NotificationManager::class.java
+            ) as NotificationManager
+
+            notificationManager.sendGeofenceEnteredNotification(context, foundIndex)
+        }
+
+
     }
 }
 
