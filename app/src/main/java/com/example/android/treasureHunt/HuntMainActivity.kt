@@ -26,6 +26,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -328,6 +329,22 @@ class HuntMainActivity : AppCompatActivity() {
      */
     private fun removeGeofences() {
         // TODO: Step 12 add in code to remove the geofences
+        if (!foregroundAndBackgroundLocationPermissionApproved()) return
+
+        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
+            addOnSuccessListener {
+                Log.d(TAG, getString(R.string.geofences_removed))
+                Toast.makeText(
+                    applicationContext,
+                    R.string.geofences_removed,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            addOnFailureListener {
+                Log.d(TAG, getString(R.string.geofences_not_removed))
+                it.printStackTrace()
+            }
+        }
     }
 
     companion object {
