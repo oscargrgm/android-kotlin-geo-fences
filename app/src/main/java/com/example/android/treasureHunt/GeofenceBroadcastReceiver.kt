@@ -22,7 +22,10 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.example.android.treasureHunt.HuntMainActivity.Companion.ACTION_GEOFENCE_EVENT
+import com.example.android.treasureHunt.ui.HuntMainActivity.Companion.ACTION_GEOFENCE_EVENT
+import com.example.android.treasureHunt.util.GeofencingConstants
+import com.example.android.treasureHunt.util.errorMessage
+import com.example.android.treasureHunt.util.sendGeofenceEnteredNotification
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
 
@@ -64,7 +67,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                 }
 
                 // Unknown Geofences aren't helpful to us
-                if ( -1 == foundIndex ) {
+                if (-1 == foundIndex) {
                     Log.e(TAG, "Unknown Geofence: Abort Mission")
                     return
                 }

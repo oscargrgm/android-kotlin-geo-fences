@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.treasureHunt
+package com.example.android.treasureHunt.util
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -25,6 +25,8 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.example.android.treasureHunt.R
+import com.example.android.treasureHunt.ui.HuntMainActivity
 
 /*
  * We need to create a NotificationChannel associated with our CHANNEL_ID before sending a
@@ -45,7 +47,8 @@ fun createChannel(context: Context) {
         notificationChannel.enableLights(true)
         notificationChannel.lightColor = Color.RED
         notificationChannel.enableVibration(true)
-        notificationChannel.description = context.getString(R.string.notification_channel_description)
+        notificationChannel.description =
+            context.getString(R.string.notification_channel_description)
 
         val notificationManager = context.getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(notificationChannel)
@@ -78,8 +81,12 @@ fun NotificationManager.sendGeofenceEnteredNotification(context: Context, foundI
     // a custom message when a Geofence triggers.
     val builder = NotificationCompat.Builder(context, CHANNEL_ID)
         .setContentTitle(context.getString(R.string.app_name))
-        .setContentText(context.getString(R.string.content_text,
-            context.getString(GeofencingConstants.LANDMARK_DATA[foundIndex].name)))
+        .setContentText(
+            context.getString(
+                R.string.content_text,
+                context.getString(GeofencingConstants.LANDMARK_DATA[foundIndex].name)
+            )
+        )
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setContentIntent(contentPendingIntent)
         .setSmallIcon(R.drawable.map_small)

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.example.android.treasureHunt
+package com.example.android.treasureHunt.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.example.android.treasureHunt.util.GeofencingConstants
+import com.example.android.treasureHunt.R
 
 /*
  * This class contains the state of the game.  The two important pieces of state are the index
@@ -56,14 +58,14 @@ class GeofenceViewModel(state: SavedStateHandle) : ViewModel() {
     }
 
     fun updateHint(currentIndex: Int) {
-        _hintIndex.value = currentIndex+1
+        _hintIndex.value = currentIndex + 1
     }
 
     fun geofenceActivated() {
         _geofenceIndex.value = _hintIndex.value
     }
 
-    fun geofenceIsActive() =_geofenceIndex.value == _hintIndex.value
+    fun geofenceIsActive() = _geofenceIndex.value == _hintIndex.value
     fun nextGeofenceIndex() = _hintIndex.value ?: 0
 }
 
